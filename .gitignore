@@ -57,3 +57,5 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Bruno API requests configuration (Local only)
 api-requests/
+
+/generated/prisma

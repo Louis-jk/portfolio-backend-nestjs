@@ -1,0 +1,54 @@
+name: NestJS CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. GitHub 원격 저장소의 소스코드를 가상 머신으로 가져오기
+      - name: Checkout repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+
+      # 2. pnpm 패키지 매니저 설치 및 캐싱 설정 (속도 향상)
+      - name: Install pnpm
+        uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+        with:
+          version: 9
+
+      # 3. Node.js 환경 세팅 (pnpm 캐시 포함)
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      # 4. 의존성 패키지 설치 (frozen-lockfile 옵션으로 락파일 사용)
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 5. Prisma Client 생성 (generate만 수행, DB 연결 불필요)
+      - name: Generate Prisma Client
+        run: pnpm prisma generate
+        
+      # 6. 코드 스타일 및 린트 검사
+      - name: Run linter
+        run: pnpm run lint:ci
+
+      # 7. 단위 테스트 실행
+      - name: Run unit tests
+        run: pnpm run test
+
+      # 8. 프로젝트 빌드 검증 (컴파일 에러가 없는지 체크)
+      - name: Build the project
+        run: pnpm run build
