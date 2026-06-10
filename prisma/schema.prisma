@@ -13,41 +13,43 @@ datasource db {
 }
 
 model Project {
-  id                  Int           @id @default(autoincrement())
-  sortOrder           Int           @default(0)
-  imageUrl            String                
-  startDate           DateTime
-  endDate             DateTime?
-  isPublic            Boolean       @default(false)
-  
+  id                 Int       @id @default(autoincrement())
+  sortOrder          Int       @default(0) @map("sort_order")
+  imageUrl           String    @map("image_url")
+  startDate          DateTime  @map("start_date")
+  endDate            DateTime? @map("end_date")
+  isPublic           Boolean   @default(false) @map("is_public")
+
   // 기술 스택, 플랫폼 카테고리, 도메인 태그 (영문/공통 텍스트 배열)
-  technologies        String[]      @default([])    
-  platformCategories  String[]      @default([])  
-  domainTags          String[]      @default([])
+  technologies       String[]  @default([])
+  platformCategories String[]  @default([]) @map("platform_categories")
+  domainTags         String[]  @default([]) @map("domain_tags")
 
   // 다국어 문자열 [ko, ja, en] (I18nStringDto 매핑)
   // 매핑 규격: {"ko": "...", "ja": "...", "en": "..."}
-  title               Json
-  company             Json
-  role                Json
-  overview            Json
-  
+  title              Json      @db.JsonB
+  company            Json      @db.JsonB
+  role               Json      @db.JsonB
+  overview           Json      @db.JsonB
+
   // 다국어 문자열 배열 [ko, ja, en] (I18nStringArrayDto 매핑)
   // 매핑 규격: {"ko": ["...", "..."], "ja": ["...", "..."], "en": ["...", "..."]}
-  description         Json
-  challenges          Json
-  achievements        Json
-  
+  description        Json      @db.JsonB
+  challenges         Json      @db.JsonB
+  achievements       Json      @db.JsonB
+
   // 플랫폼 링크 구조 (PlatformsDto 매핑)
   // 매핑 규격: {"webLink": "...", "iosLink": "...", "androidLink": "...", "desktopLink": "..."}
-  platforms           Json          @default("{}")
-  
+  platforms          Json      @db.JsonB
+
   // 도구 구조 (ToolsDto 매핑)
   // 매핑 규격: {"development": ["...", "..."], "communication": ["...", "..."], "design": ["...", "..."], "debugging": ["...", "..."]}
-  tools               Json          @default("{}")
+  tools              Json      @db.JsonB
 
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  @@map("projects")
 }
 
 model PortfolioDocument {
@@ -57,7 +59,7 @@ model PortfolioDocument {
   locale     String
   title      String
   content    String                 @db.Text
-  metadata   Json                   @default("{}")
+  metadata   Json                   @db.JsonB
   embedding  Unsupported("vector(1536)")
   createdAt  DateTime               @default(now()) @map("created_at")
   updatedAt  DateTime               @default(now()) @updatedAt @map("updated_at")
