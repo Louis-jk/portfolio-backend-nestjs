@@ -9,9 +9,29 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { I18nStringDto, I18nStringArrayDto } from './i18n-string.dto';
+import {
+  I18nStringDto,
+  I18nStringArrayDto,
+  type I18nString,
+  type I18nStringArray,
+} from './i18n-string.dto';
 
-// 플랫폼 링크 구조
+export interface Platforms {
+  webLink?: string;
+  iosLink?: string;
+  androidLink?: string;
+  desktopLink?: string;
+  [key: string]: string | undefined;
+}
+
+export interface Tools {
+  development?: string[];
+  communication?: string[];
+  design?: string[];
+  debugging?: string[];
+  [key: string]: string[] | undefined;
+}
+
 class PlatformsDto {
   @IsUrl() @IsOptional() webLink?: string;
   @IsUrl() @IsOptional() iosLink?: string;
@@ -19,7 +39,6 @@ class PlatformsDto {
   @IsUrl() @IsOptional() desktopLink?: string;
 }
 
-// 도구 구조
 class ToolsDto {
   @IsString({ each: true }) @IsOptional() development?: string[];
   @IsString({ each: true }) @IsOptional() communication?: string[];
@@ -63,45 +82,50 @@ export class CreateProjectDto {
   @IsObject()
   @ValidateNested()
   @Type(() => I18nStringDto)
-  title: I18nStringDto;
+  title: I18nString;
 
   @IsObject()
   @ValidateNested()
   @Type(() => I18nStringDto)
-  company: I18nStringDto;
+  company: I18nString;
 
   @IsObject()
   @ValidateNested()
   @Type(() => I18nStringDto)
-  role: I18nStringDto;
+  region: I18nString;
 
   @IsObject()
   @ValidateNested()
   @Type(() => I18nStringDto)
-  overview: I18nStringDto;
+  role: I18nString;
+
+  @IsObject()
+  @ValidateNested()
+  @Type(() => I18nStringDto)
+  overview: I18nString;
 
   @IsObject()
   @ValidateNested()
   @Type(() => I18nStringArrayDto)
-  description: I18nStringArrayDto;
+  description: I18nStringArray;
 
   @IsObject()
   @ValidateNested()
   @Type(() => I18nStringArrayDto)
-  challenges: I18nStringArrayDto;
+  challenges: I18nStringArray;
 
   @IsObject()
   @ValidateNested()
   @Type(() => I18nStringArrayDto)
-  achievements: I18nStringArrayDto;
+  achievements: I18nStringArray;
 
   @IsObject()
   @ValidateNested()
   @Type(() => PlatformsDto)
-  platforms: PlatformsDto;
+  platforms: Platforms;
 
   @IsObject()
   @ValidateNested()
   @Type(() => ToolsDto)
-  tools: ToolsDto;
+  tools: Tools;
 }

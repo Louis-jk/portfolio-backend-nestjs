@@ -4,8 +4,9 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -29,6 +30,7 @@ model Project {
   // 매핑 규격: {"ko": "...", "ja": "...", "en": "..."}
   title              Json      @db.JsonB
   company            Json      @db.JsonB
+  region             Json      @db.JsonB
   role               Json      @db.JsonB
   overview           Json      @db.JsonB
 

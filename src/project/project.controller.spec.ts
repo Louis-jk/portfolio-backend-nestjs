@@ -1,18 +1,36 @@
+jest.mock('../prisma/prisma.service', () => ({
+  PrismaService: class MockPrismaService {
+    project = {
+      create: jest.fn(),
+      findMany: jest.fn(),
+      findUnique: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    };
+  },
+}));
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectController } from './project.controller';
 import { ProjectService } from './project.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 
 describe('ProjectController', () => {
   let controller: ProjectController;
+  let createMock: jest.SpiedFunction<
+    (args: { data: unknown }) => Promise<unknown>
+  >;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProjectController],
-      providers: [ProjectService],
+      providers: [ProjectService, PrismaService],
     }).compile();
 
     controller = module.get<ProjectController>(ProjectController);
+    const prismaService = module.get(PrismaService);
+    createMock = jest.spyOn(prismaService.project, 'create');
   });
 
   it('should be defined', () => {
@@ -20,7 +38,7 @@ describe('ProjectController', () => {
   });
 
   describe('create', () => {
-    it('should create a project', () => {
+    it('should create a project', async () => {
       const createProjectDto: CreateProjectDto = {
         sortOrder: 1,
         imageUrl: 'https://test.com',
@@ -36,6 +54,7 @@ describe('ProjectController', () => {
           en: 'Test Project',
         },
         company: { ko: '테스트 회사', ja: 'テスト会社', en: 'Test Company' },
+        region: { ko: '대한민국', ja: '韓国', en: 'South Korea' },
         role: { ko: '테스트 역할', ja: 'テスト役割', en: 'Test Role' },
         overview: { ko: '테스트 소개', ja: 'テスト紹介', en: 'Test Overview' },
         description: {
@@ -66,8 +85,13 @@ describe('ProjectController', () => {
           debugging: ['테스트 디버깅', '테스트 디버깅 도구'],
         },
       };
-      const result = controller.create(createProjectDto);
-      expect(result).toBe('This action adds a new project');
+      const createdProject = { id: 1, ...createProjectDto };
+      createMock.mockResolvedValue(createdProject);
+
+      const result = await controller.create(createProjectDto);
+
+      expect(result).toEqual(createdProject);
+      expect(createMock).toHaveBeenCalled();
     });
   });
 });
