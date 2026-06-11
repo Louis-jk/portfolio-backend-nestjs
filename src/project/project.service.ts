@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -44,7 +44,7 @@ export class ProjectService {
   async findOne(id: number): Promise<Project> {
     const project = await this.prisma.project.findUnique({ where: { id } });
     if (!project) {
-      throw new Error('Project not found');
+      throw new NotFoundException('Project not found');
     }
     return project;
   }
@@ -55,7 +55,7 @@ export class ProjectService {
   ): Promise<Project> {
     const project = await this.prisma.project.findUnique({ where: { id } });
     if (!project) {
-      throw new Error('Project not found');
+      throw new NotFoundException('Project not found');
     }
     return await this.prisma.project.update({
       where: { id },
@@ -66,7 +66,7 @@ export class ProjectService {
   async remove(id: number): Promise<void> {
     const project = await this.prisma.project.findUnique({ where: { id } });
     if (!project) {
-      throw new Error('Project not found');
+      throw new NotFoundException('Project not found');
     }
     await this.prisma.project.delete({ where: { id } });
   }
