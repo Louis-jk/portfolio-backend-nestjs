@@ -1,5 +1,19 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
+export interface I18nString {
+  ko: string;
+  ja: string;
+  en: string;
+  [key: string]: string;
+}
+
+export interface I18nStringArray {
+  ko: string[];
+  ja: string[];
+  en: string[];
+  [key: string]: string[];
+}
+
 // 문자열 다국어 구조 (예: 프로젝트 이름, 설명 등)
 export class I18nStringDto {
   @IsString()

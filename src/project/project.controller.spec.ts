@@ -36,6 +36,7 @@ describe('ProjectController', () => {
           en: 'Test Project',
         },
         company: { ko: '테스트 회사', ja: 'テスト会社', en: 'Test Company' },
+        region: { ko: '대한민국', ja: '韓国', en: 'South Korea' },
         role: { ko: '테스트 역할', ja: 'テスト役割', en: 'Test Role' },
         overview: { ko: '테스트 소개', ja: 'テスト紹介', en: 'Test Overview' },
         description: {

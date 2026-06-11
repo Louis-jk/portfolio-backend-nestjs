@@ -11,36 +11,37 @@ import {
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { Project } from '../../generated/prisma/client';
 
-@Controller('project')
+@Controller('projects')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @Post()
-  create(@Body() createProjectDto: CreateProjectDto) {
-    return this.projectService.create(createProjectDto);
+  async create(@Body() createProjectDto: CreateProjectDto): Promise<Project> {
+    return await this.projectService.create(createProjectDto);
   }
 
   @Get()
-  findAll() {
-    return this.projectService.findAll();
+  async findAll(): Promise<Project[]> {
+    return await this.projectService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.projectService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Project> {
+    return await this.projectService.findOne(id);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateProjectDto: UpdateProjectDto,
-  ) {
-    return this.projectService.update(id, updateProjectDto);
+  ): Promise<Project> {
+    return await this.projectService.update(id, updateProjectDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.projectService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return await this.projectService.remove(id);
   }
 }
