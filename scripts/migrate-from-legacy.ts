@@ -57,6 +57,10 @@ interface LegacyDocument {
   updated_at: Date;
 }
 
+interface CountRow {
+  c: number;
+}
+
 function requireEnv(name: string): string {
   const value = process.env[name];
   if (!value) {
@@ -89,7 +93,9 @@ function pivotArrayField(
   );
 }
 
-function toPlatforms(platform: LegacyPlatform | undefined): Record<string, string> {
+function toPlatforms(
+  platform: LegacyPlatform | undefined,
+): Record<string, string> {
   if (!platform) {
     return {};
   }
@@ -263,13 +269,15 @@ async function main() {
 
     await target.query('COMMIT');
 
-    const projectCount = await target.query('SELECT COUNT(*)::int AS c FROM projects');
-    const docCount = await target.query(
+    const projectCount = await target.query<CountRow>(
+      'SELECT COUNT(*)::int AS c FROM projects',
+    );
+    const docCount = await target.query<CountRow>(
       'SELECT COUNT(*)::int AS c FROM portfolio_documents',
     );
 
     console.log(
-      `Migration complete: ${projectCount.rows[0].c} projects, ${docCount.rows[0].c} documents`,
+      `Migration complete: ${projectCount.rows[0]?.c ?? 0} projects, ${docCount.rows[0]?.c ?? 0} documents`,
     );
   } catch (error) {
     await target.query('ROLLBACK');
