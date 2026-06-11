@@ -11,7 +11,7 @@ import {
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { Project } from '../../generated/prisma/client';
+import type { Project } from '../../generated/prisma/client';
 
 @Controller('projects')
 export class ProjectController {
